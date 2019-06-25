@@ -188,6 +188,19 @@ if __name__ == '__main__':
         cooldown=0,
         min_lr=0)
 
+    tb = TensorBoard(
+        log_dir=os.path.join(checkpoints),
+        histogram_freq=0,
+        batch_size=batch_size,
+        write_graph=True,
+        write_grads=False,
+        write_images=False,
+        embeddings_freq=0,
+        embeddings_layer_names=None,
+        embeddings_metadata=None,
+        embeddings_data=None,
+        update_freq='batch')
+
     model.fit_generator(
         train_gen,
         steps_per_epoch=train_gen.samples // batch_size,
