@@ -18,6 +18,8 @@ from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from keras.applications import ResNet50, VGG16, NASNetMobile
 
+from efficientnet import EfficientNetB3
+
 
 def get_optimizer(optimizer, learning_rate):
     if optimizer == 'adam':
@@ -29,6 +31,19 @@ def get_optimizer(optimizer, learning_rate):
             f"Learning rate setting not supported by {optimizer} optimizer",
             UserWarning)
         return optimizer
+
+
+def create_efficientnet_model():
+    efficientnet = EfficientNetB3(
+        include_top=False, weights='imagenet', input_shape=(224, 224, 3))
+    efficientnet.trainable = False
+    x = efficientnet.output
+    x = Flatten()(x)
+    x = Dense(1024, activation="relu")(x)
+    x = Dropout(0.5)(x)
+    predictions = Dense(45, activation="softmax")(x)
+    model_final = Model(efficientnet.input, predictions)
+
 
 def create_nasnet_model():
     NASnet = NASNetMobile(
@@ -99,7 +114,7 @@ if __name__ == '__main__':
         required=True)
     parser.add_argument(
         '--model-name',
-        help='Which model to use. Options: resnet, vgg, nasnet',
+        help='Which model to use. Options: resnet, vgg, nasnet, efficientnet',
         action='store',
         dest='model_name',
         default='vgg')
@@ -150,6 +165,9 @@ if __name__ == '__main__':
     elif model_name == 'nasnet':
         model = create_nasnet_model()
         target_size = (224, 224)
+    elif model_name == 'efficientnet':
+        model = create_efficientnet_model()
+        target_size = (224,224)
 
     optimizer = get_optimizer(optimizer, lr)
 
