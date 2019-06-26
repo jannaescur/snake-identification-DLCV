@@ -16,7 +16,7 @@ from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-from keras.applications import ResNet50, VGG16, NASNetLarge
+from keras.applications import ResNet50, VGG16, NASNetMobile
 
 
 def get_optimizer(optimizer, learning_rate):
@@ -31,7 +31,7 @@ def get_optimizer(optimizer, learning_rate):
         return optimizer
 
 def create_nasnet_model():
-    NASnet = NASNetLarge(
+    NASnet = NASNetMobile(
         include_top=False, weights='imagenet', input_shape= (331, 331, 3))
     nasnet_out = NASnet.layers[-1].output
     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
