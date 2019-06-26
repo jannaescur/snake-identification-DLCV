@@ -15,7 +15,7 @@ from keras.models import Model
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from keras.applications import ResNet50, VGG16, NASNetLarge
 
 
@@ -41,6 +41,8 @@ def create_nasnet_model():
     x = Activation(tf.nn.softmax)(x)
 
     model = Model(NASnet.input, x)
+
+    return model
 
 
 def create_resnet_model():
@@ -141,13 +143,13 @@ if __name__ == '__main__':
 
     if model_name == 'resnet':
         model = create_resnet_model()
-        target_size = (224,224)
+        target_size = (224, 224)
     elif model_name == 'vgg':
         model = create_vgg_model()
-        target_size = (224,224)
+        target_size = (224, 224)
     elif model_name == 'nasnet':
         model = create_nasnet_model()
-        target_size = (331,331)
+        target_size = (331, 331)
 
     optimizer = get_optimizer(optimizer, lr)
 
@@ -198,7 +200,7 @@ if __name__ == '__main__':
     early_stopping = EarlyStopping(patience=10)
 
     checkpointer = ModelCheckpoint(
-        os.path.join(checkpoints, experiment_name, 'resnet50_best.h5'),
+        os.path.join(checkpoints, experiment_name, 'best.h5'),
         verbose=1,
         save_best_only=True)
 
