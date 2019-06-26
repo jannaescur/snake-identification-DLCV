@@ -32,7 +32,7 @@ def get_optimizer(optimizer, learning_rate):
 
 def create_nasnet_model():
     NASnet = NASNetMobile(
-        include_top=False, weights='imagenet', input_shape= (331, 331, 3))
+        include_top=False, weights='imagenet', input_shape= (224, 224, 3))
     nasnet_out = NASnet.layers[-1].output
     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
     x = Dense(512, activation='relu')(nasnet_out)
@@ -149,7 +149,7 @@ if __name__ == '__main__':
         target_size = (224, 224)
     elif model_name == 'nasnet':
         model = create_nasnet_model()
-        target_size = (331, 331)
+        target_size = (224, 224)
 
     optimizer = get_optimizer(optimizer, lr)
 
