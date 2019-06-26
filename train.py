@@ -78,6 +78,12 @@ if __name__ == '__main__':
         dest='checkpoints',
         required=True)
     parser.add_argument(
+        '--experiment-name',
+        help='Name of the experiment',
+        action='store',
+        dest='experiment_name',
+        required=True)
+    parser.add_argument(
         '--model-name',
         help='Which model to use. Options: resnet, vgg',
         action='store',
@@ -114,6 +120,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     dataset = args.dataset
     checkpoints = args.checkpoints
+    experiment_name = args.experiment_name
     model_name = args.model_name
     epochs = args.epochs
     batch_size = args.batch_size
@@ -174,7 +181,7 @@ if __name__ == '__main__':
     early_stopping = EarlyStopping(patience=10)
 
     checkpointer = ModelCheckpoint(
-        os.path.join(checkpoints, 'resnet50_best.h5'),
+        os.path.join(checkpoints, experiment_name, 'resnet50_best.h5'),
         verbose=1,
         save_best_only=True)
 
@@ -189,7 +196,7 @@ if __name__ == '__main__':
         min_lr=0)
 
     tb = TensorBoard(
-        log_dir=os.path.join(checkpoints),
+        log_dir=os.path.join(checkpoints, experiment_name),
         histogram_freq=0,
         batch_size=batch_size,
         write_graph=True,
@@ -205,8 +212,8 @@ if __name__ == '__main__':
         train_gen,
         steps_per_epoch=train_gen.samples // batch_size,
         epochs=epochs,
-        callbacks=[early_stopping, checkpointer, reduce_on_plateau],
+        callbacks=[early_stopping, checkpointer, reduce_on_plateau, tb],
         validation_data=val_gen,
         validation_steps=val_gen.samples // batch_size)
 
-    model.save(os.path.join(checkpoints, 'final.h5'))
+    model.save(os.path.join(checkpoints, experiment_name, 'final.h5'))
