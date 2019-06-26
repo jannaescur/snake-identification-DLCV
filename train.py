@@ -16,7 +16,7 @@ from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from keras.applications import ResNet50, VGG16
+from keras.applications import ResNet50, VGG16, nasnet
 
 
 def get_optimizer(optimizer, learning_rate):
@@ -29,6 +29,18 @@ def get_optimizer(optimizer, learning_rate):
             f"Learning rate setting not supported by {optimizer} optimizer",
             UserWarning)
         return optimizer
+
+def create_nasnet_model():
+    nasnet = nasnet.NASNetLarge(
+        include_top=False, weights='imagenet', input_shape= (331, 331, 3))
+    nasnet_out = nasnet.layers[-1].output
+    nasnet_out = GlobalAveragePooling2D()(nasnet_out)
+    x = Dense(512, activation='relu')(nasnet_out)
+    x = Dense(256, activation='relu')(x)
+    x = Dense(45)(x)
+    x = Activation(tf.nn.softmax)(x)
+
+    model = Model(nasnet.input, x)
 
 
 def create_resnet_model():
@@ -85,7 +97,7 @@ if __name__ == '__main__':
         required=True)
     parser.add_argument(
         '--model-name',
-        help='Which model to use. Options: resnet, vgg',
+        help='Which model to use. Options: resnet, vgg, nasnet',
         action='store',
         dest='model_name',
         default='vgg')
