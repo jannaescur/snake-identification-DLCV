@@ -143,6 +143,8 @@ if __name__ == '__main__':
         model = create_resnet_model()
     elif model_name == 'vgg':
         model = create_vgg_model()
+    elif model_name == 'nasnet':
+        model = create_nasnet_model()
 
     optimizer = get_optimizer(optimizer, lr)
 
