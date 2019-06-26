@@ -10,7 +10,7 @@ set_random_seed(2)
 
 import tensorflow as tf
 import keras
-from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D
+from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D, Dropout
 from keras.models import Model
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
@@ -36,7 +36,9 @@ def create_nasnet_model():
     nasnet_out = NASnet.layers[-1].output
     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
     x = Dense(512, activation='relu')(nasnet_out)
+    x = Dropout(0.5)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
@@ -51,7 +53,9 @@ def create_resnet_model():
     resnet_out = resnet.layers[-1].output
     resnet_out = GlobalAveragePooling2D()(resnet_out)
     x = Dense(512, activation='relu')(resnet_out)
+    x = Dropout(0.5)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
@@ -66,7 +70,9 @@ def create_vgg_model():
     vgg_out = vgg.layers[-1].output
     vgg_out = GlobalAveragePooling2D()(vgg_out)
     x = Dense(512, activation='relu')(vgg_out)
+    x = Dropout(0.5)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
