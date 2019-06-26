@@ -32,7 +32,7 @@ def get_optimizer(optimizer, learning_rate):
 
 def create_nasnet_model():
     NASnet = NASNetLarge(
-        include_top=False, weights='imagenet', input_shape= (224, 224, 3))
+        include_top=False, weights='imagenet', input_shape= (331, 331, 3))
     nasnet_out = NASnet.layers[-1].output
     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
     x = Dense(512, activation='relu')(nasnet_out)
@@ -141,10 +141,13 @@ if __name__ == '__main__':
 
     if model_name == 'resnet':
         model = create_resnet_model()
+        target_size = (224,224)
     elif model_name == 'vgg':
         model = create_vgg_model()
+        target_size = (224,224)
     elif model_name == 'nasnet':
         model = create_nasnet_model()
+        target_size = (331,331)
 
     optimizer = get_optimizer(optimizer, lr)
 
@@ -180,14 +183,14 @@ if __name__ == '__main__':
 
     train_gen = img_gen.flow_from_directory(
         dataset,
-        target_size=(224, 224),
+        target_size=target_size,
         batch_size=batch_size,
         seed=2,
         subset='training')
 
     val_gen = img_gen.flow_from_directory(
         dataset,
-        target_size=(224, 224),
+        target_size=target_size,
         batch_size=batch_size,
         seed=2,
         subset='validation')
