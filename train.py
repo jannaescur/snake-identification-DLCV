@@ -31,16 +31,16 @@ def get_optimizer(optimizer, learning_rate):
         return optimizer
 
 def create_nasnet_model():
-    nasnet = nasnet.NASNetLarge(
+    NASnet = nasnet.NASNetLarge(
         include_top=False, weights='imagenet', input_shape= (331, 331, 3))
-    nasnet_out = nasnet.layers[-1].output
+    nasnet_out = NASnet.layers[-1].output
     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
     x = Dense(512, activation='relu')(nasnet_out)
     x = Dense(256, activation='relu')(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
-    model = Model(nasnet.input, x)
+    model = Model(NASnet.input, x)
 
 
 def create_resnet_model():
