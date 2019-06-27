@@ -16,7 +16,7 @@ from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-from keras.applications import ResNet50, VGG16, NASNetMobile
+from keras.applications import ResNet50, VGG16
 
 from efficientnet import EfficientNetB3
 
@@ -51,19 +51,19 @@ def create_efficientnet_model():
     return model_final
 
 
-def create_nasnet_model():
-    NASnet = NASNetMobile(
-        include_top=False, weights='imagenet', input_shape= (224, 224, 3))
-    nasnet_out = NASnet.layers[-1].output
-    nasnet_out = GlobalAveragePooling2D()(nasnet_out)
-    x = Dense(512, activation='relu')(nasnet_out)
-    x = Dense(256, activation='relu')(x)
-    x = Dense(45)(x)
-    x = Activation(tf.nn.softmax)(x)
+# def create_nasnet_model():
+#     NASnet = NASNetMobile(
+#         include_top=False, weights='imagenet', input_shape= (224, 224, 3))
+#     nasnet_out = NASnet.layers[-1].output
+#     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
+#     x = Dense(512, activation='relu')(nasnet_out)
+#     x = Dense(256, activation='relu')(x)
+#     x = Dense(45)(x)
+#     x = Activation(tf.nn.softmax)(x)
 
-    model = Model(NASnet.input, x)
+#     model = Model(NASnet.input, x)
 
-    return model
+#     return model
 
 
 def create_resnet_model():
@@ -168,9 +168,9 @@ if __name__ == '__main__':
     elif model_name == 'vgg':
         model = create_vgg_model()
         target_size = (224, 224)
-    elif model_name == 'nasnet':
-        model = create_nasnet_model()
-        target_size = (224, 224)
+    # elif model_name == 'nasnet':
+    #     model = create_nasnet_model()
+    #     target_size = (224, 224)
     elif model_name == 'efficientnet':
         model = create_efficientnet_model()
         target_size = (224,224)
