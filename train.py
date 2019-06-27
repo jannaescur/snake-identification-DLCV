@@ -135,7 +135,7 @@ if __name__ == '__main__':
         type=float,
         action='store',
         dest='lr',
-        default=0.001)
+        default=0.005)
 
     args = parser.parse_args()
     dataset = args.dataset
