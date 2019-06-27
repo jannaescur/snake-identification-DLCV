@@ -36,7 +36,8 @@ def get_optimizer(optimizer, learning_rate):
 def create_efficientnet_model():
     efficientnet = EfficientNetB3(
         include_top=False, weights='imagenet', input_shape=(224, 224, 3))
-    efficientnet.trainable = False
+    for layer in efficientnet.layers:
+        layer.trainable = False
     x = efficientnet.output
     x = Flatten()(x)
     x = Dense(1024, activation="relu")(x)
