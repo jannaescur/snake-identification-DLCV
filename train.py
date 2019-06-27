@@ -33,7 +33,7 @@ def get_optimizer(optimizer, learning_rate):
 def create_inception_resnet_v2_model():
     inception_resnetv2 = InceptionResNetV2(
         include_top=False, weights='imagenet', input_shape=(299,299,3))
-    inception_resnetv2_out = inception_resnetv2[-1].output
+    inception_resnetv2_out = inception_resnetv2.layers[-1].output
     inception_resnetv2_out = GlobalAveragePooling2D()(inception_resnetv2_out)
     x = Dense(512, activation='relu')(inception_resnetv2_out)
     x = Dense(256, activation='relu')(x)
