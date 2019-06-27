@@ -40,7 +40,7 @@ def create_efficientnet_model():
         layer.trainable = False
     x = efficientnet.output
     x = Flatten()(x)
-    x = Dense(1024, activation="relu")(x)
+    x = Dense(256, activation="relu")(x)
     x = Dropout(0.5)(x)
     predictions = Dense(45, activation="softmax")(x)
     model_final = Model(efficientnet.input, predictions)
