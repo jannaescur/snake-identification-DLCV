@@ -10,7 +10,7 @@ set_random_seed(2)
 
 import tensorflow as tf
 import keras
-from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D
+from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D, Dropout
 from keras.models import Model
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
