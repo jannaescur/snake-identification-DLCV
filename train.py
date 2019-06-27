@@ -165,7 +165,7 @@ if __name__ == '__main__':
     elif model_name == 'nasnet':
         model = create_nasnet_model()
         target_size = (224, 224)
-    elif model_name = 'inception_resnet_v2':
+    elif model_name == 'inception_resnet_v2':
         model = create_inception_resnet_v2_model()
         target_size = (299, 299)
 
