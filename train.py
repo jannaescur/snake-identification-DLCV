@@ -16,7 +16,7 @@ from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-from keras.applications import ResNet50, VGG16, NASNetMobile
+from keras.applications import ResNet50, VGG16, NASNetMobile, InceptionResNetV2
 
 
 def get_optimizer(optimizer, learning_rate):
@@ -29,6 +29,21 @@ def get_optimizer(optimizer, learning_rate):
             f"Learning rate setting not supported by {optimizer} optimizer",
             UserWarning)
         return optimizer
+
+def create_inception_resnet_v2_model():
+    inception_resnetv2 = InceptionResNetV2(
+        include_top=False, weights='imagenet', input_shape=(299,299,3))
+    inception_resnetv2_out = inception_resnetv2[-1].output
+    inception_resnetv2_out = GlobalAveragePooling2D()(inception_resnetv2_out)
+    x = Dense(512, activation='relu')(inception_resnetv2_out)
+    x = Dense(256, activation='relu')(x)
+    x = Dense(45)(x)
+    x = Activation(tf.nn.softmax)(x)
+
+    model = Model(inception_resnetv2.input, x)
+
+    return model
+
 
 def create_nasnet_model():
     NASnet = NASNetMobile(
@@ -99,7 +114,7 @@ if __name__ == '__main__':
         required=True)
     parser.add_argument(
         '--model-name',
-        help='Which model to use. Options: resnet, vgg, nasnet',
+        help='Which model to use. Options: resnet, vgg, nasnet, inception_resnet_v2',
         action='store',
         dest='model_name',
         default='vgg')
@@ -150,6 +165,9 @@ if __name__ == '__main__':
     elif model_name == 'nasnet':
         model = create_nasnet_model()
         target_size = (224, 224)
+    elif model_name = 'inception_resnet_v2':
+        model = create_inception_resnet_v2_model()
+        target_size = (299, 299)
 
     optimizer = get_optimizer(optimizer, lr)
 
