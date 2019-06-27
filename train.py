@@ -19,7 +19,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, T
 from keras.applications import ResNet50, VGG16
 
 from keras_efficientnets import EfficientNetB4
-from keras_efficientnet import custom_objects
+from keras_efficientnets import custom_objects
 
 
 def get_optimizer(optimizer, learning_rate):
