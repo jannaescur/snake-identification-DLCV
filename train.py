@@ -35,7 +35,7 @@ def get_optimizer(optimizer, learning_rate):
 
 
 def create_efficientnet_model():
-    efficientnet = EfficientNetB3(
+    efficientnet = EfficientNetB4(
         include_top=False, weights='imagenet', input_shape=(224, 224, 3))
     # for layer in efficientnet.layers:
     #     layer.trainable = False
