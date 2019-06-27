@@ -18,7 +18,7 @@ from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from keras.applications import ResNet50, VGG16
 
-from efficientnet import EfficientNetB3
+from keras_efficientnets import EfficientNetB3
 
 
 def get_optimizer(optimizer, learning_rate):
