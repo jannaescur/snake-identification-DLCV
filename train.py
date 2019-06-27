@@ -36,14 +36,17 @@ def get_optimizer(optimizer, learning_rate):
 def create_efficientnet_model():
     efficientnet = EfficientNetB3(
         include_top=False, weights='imagenet', input_shape=(224, 224, 3))
-    for layer in efficientnet.layers:
-        layer.trainable = False
-    x = efficientnet.output
-    x = GlobalAveragePooling2D()(x)
-    x = Dense(256, activation="relu")(x)
+    # for layer in efficientnet.layers:
+    #     layer.trainable = False
+
+    efficientnet_output = efficientnet.layers[-1].output
+    efficientnet_output = GlobalAveragePooling2D()(efficientnet_output)
+    x = Dense(512, activation="relu")(efficientnet_output)
+    x = Dense(256, activation='relu')(x)
     x = Dropout(0.5)(x)
-    predictions = Dense(45, activation="softmax")(x)
-    model_final = Model(efficientnet.input, predictions)
+    x = Dense(45)(x) 
+    x = Activation(tf.nn.softmax)(x)
+    model_final = Model(efficientnet.input, x)
 
     return model_final
 
