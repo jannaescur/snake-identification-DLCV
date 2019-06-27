@@ -44,6 +44,8 @@ def create_efficientnet_model():
     predictions = Dense(45, activation="softmax")(x)
     model_final = Model(efficientnet.input, predictions)
 
+    return model_final
+
 
 def create_nasnet_model():
     NASnet = NASNetMobile(
