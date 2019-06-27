@@ -135,7 +135,7 @@ if __name__ == '__main__':
         type=float,
         action='store',
         dest='lr',
-        default=0.005)
+        default=0.001)
 
     args = parser.parse_args()
     dataset = args.dataset
@@ -213,7 +213,7 @@ if __name__ == '__main__':
     reduce_on_plateau = ReduceLROnPlateau(
         monitor='val_loss',
         factor=0.1,
-        patience=5,
+        patience=8,
         verbose=0,
         mode='auto',
         min_delta=0.0001,
