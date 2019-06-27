@@ -39,7 +39,7 @@ def create_efficientnet_model():
     for layer in efficientnet.layers:
         layer.trainable = False
     x = efficientnet.output
-    x = Flatten()(x)
+    x = GlobalAveragePooling2D()(x)
     x = Dense(256, activation="relu")(x)
     x = Dropout(0.5)(x)
     predictions = Dense(45, activation="softmax")(x)
