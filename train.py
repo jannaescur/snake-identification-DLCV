@@ -10,7 +10,7 @@ set_random_seed(2)
 
 import tensorflow as tf
 import keras
-from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D
+from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D, Dropout
 from keras.models import Model
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
@@ -36,7 +36,9 @@ def create_inception_resnet_v2_model():
     inception_resnetv2_out = inception_resnetv2.layers[-1].output
     inception_resnetv2_out = GlobalAveragePooling2D()(inception_resnetv2_out)
     x = Dense(512, activation='relu')(inception_resnetv2_out)
+    x = Dropout(0.2)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.2)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
