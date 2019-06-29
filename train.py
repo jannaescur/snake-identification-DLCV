@@ -18,6 +18,8 @@ from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from keras.applications import ResNet50, VGG16, NASNetMobile, InceptionResNetV2
 
+from sklearn.metric import f1_score
+
 
 def get_optimizer(optimizer, learning_rate):
     if optimizer == 'adam':
@@ -175,10 +177,13 @@ if __name__ == '__main__':
 
     model.summary()
 
+    def f1_metric(y_true, y_pred):
+        return f1_score(y_true, y_pred)
+
     model.compile(
         optimizer=optimizer,
         loss='categorical_crossentropy',
-        metrics=['accuracy'])
+        metrics=['accuracy', f1_metric])
 
     img_gen = ImageDataGenerator(
         featurewise_center=False,
