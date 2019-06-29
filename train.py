@@ -18,7 +18,7 @@ from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
 from keras.applications import ResNet50, VGG16, NASNetMobile, InceptionResNetV2
 
-from sklearn.metric import f1_score
+from sklearn.metrics import f1_score
 
 
 def get_optimizer(optimizer, learning_rate):
