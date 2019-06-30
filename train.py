@@ -10,6 +10,7 @@ set_random_seed(2)
 
 import tensorflow as tf
 import keras
+from keras import backend as K
 from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D, Dropout
 from keras.models import Model
 from keras.optimizers import Adam, SGD
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         type=float,
         action='store',
         dest='lr',
-        default=0.001)
+        default=0.005)
 
     args = parser.parse_args()
     dataset = args.dataset
@@ -178,8 +179,35 @@ if __name__ == '__main__':
     model.summary()
 
     def f1_metric(y_true, y_pred):
-        return f1_score(y_true, y_pred)
+        def recall(y_true, y_pred):
+            """Recall metric.
 
+            Only computes a batch-wise average of recall.
+
+            Computes the recall, a metric for multi-label classification of
+            how many relevant items are selected.
+            """
+            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+            possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+            recall = true_positives / (possible_positives + K.epsilon())
+            return recall
+
+        def precision(y_true, y_pred):
+            """Precision metric.
+
+            Only computes a batch-wise average of precision.
+
+            Computes the precision, a metric for multi-label classification of
+            how many selected items are relevant.
+            """
+            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+            predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+            precision = true_positives / (predicted_positives + K.epsilon())
+            return precision
+        precision = precision(y_true, y_pred)
+        recall = recall(y_true, y_pred)
+        return 2*((precision*recall)/(precision+recall+K.epsilon()))
+    
     model.compile(
         optimizer=optimizer,
         loss='categorical_crossentropy',
