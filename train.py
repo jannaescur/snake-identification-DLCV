@@ -17,7 +17,7 @@ from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, TensorBoard
-from keras.applications import ResNet50, VGG16, NASNetMobile, InceptionResNetV2
+from keras.applications import ResNet50, VGG16, InceptionResNetV2
 
 from sklearn.metrics import f1_score
 
@@ -46,21 +46,6 @@ def create_inception_resnet_v2_model():
     x = Activation(tf.nn.softmax)(x)
 
     model = Model(inception_resnetv2.input, x)
-
-    return model
-
-
-def create_nasnet_model():
-    NASnet = NASNetMobile(
-        include_top=False, weights='imagenet', input_shape= (224, 224, 3))
-    nasnet_out = NASnet.layers[-1].output
-    nasnet_out = GlobalAveragePooling2D()(nasnet_out)
-    x = Dense(512, activation='relu')(nasnet_out)
-    x = Dense(256, activation='relu')(x)
-    x = Dense(45)(x)
-    x = Activation(tf.nn.softmax)(x)
-
-    model = Model(NASnet.input, x)
 
     return model
 
@@ -208,9 +193,6 @@ if __name__ == '__main__':
             target_size = (224, 224)
         elif model_name == 'vgg':
             model = create_vgg_model()
-            target_size = (224, 224)
-        elif model_name == 'nasnet':
-            model = create_nasnet_model()
             target_size = (224, 224)
         elif model_name == 'inception_resnet_v2':
             model = create_inception_resnet_v2_model()
