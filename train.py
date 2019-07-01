@@ -200,7 +200,7 @@ if __name__ == '__main__':
 
     if pretrained_model:
         model = load_model(pretrained_model, custom_objects={'f1_metric': f1_metric})
-        target_size = (224, 224)
+        target_size = (299, 299)
 
     else:
         if model_name == 'resnet':
