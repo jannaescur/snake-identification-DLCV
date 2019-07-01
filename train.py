@@ -234,6 +234,7 @@ if __name__ == '__main__':
         rotation_range=15,
         width_shift_range=0.2,
         height_shift_range=0.2,
+        brightness_range=None,
         shear_range=0.0,
         zoom_range=0.2,
         channel_shift_range=0.0,
