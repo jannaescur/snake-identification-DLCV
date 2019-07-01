@@ -199,7 +199,7 @@ if __name__ == '__main__':
     lr = args.lr
 
     if pretrained_model:
-        model = load_model(pretrained_model)
+        model = load_model(pretrained_model, custom_objects={'f1_metric': f1_metric})
 
     else:
         if model_name == 'resnet':
