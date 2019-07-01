@@ -12,7 +12,7 @@ import tensorflow as tf
 import keras
 from keras import backend as K
 from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D, Dropout
-from keras.models import Model
+from keras.models import Model, load_model
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.resnet50 import preprocess_input
@@ -94,6 +94,36 @@ def create_vgg_model():
 
     return model
 
+def f1_metric(y_true, y_pred):
+    def recall(y_true, y_pred):
+        """Recall metric.
+
+        Only computes a batch-wise average of recall.
+
+        Computes the recall, a metric for multi-label classification of
+        how many relevant items are selected.
+        """
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
+        recall = true_positives / (possible_positives + K.epsilon())
+        return recall
+
+    def precision(y_true, y_pred):
+        """Precision metric.
+
+        Only computes a batch-wise average of precision.
+
+        Computes the precision, a metric for multi-label classification of
+        how many selected items are relevant.
+        """
+        true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
+        predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
+        precision = true_positives / (predicted_positives + K.epsilon())
+        return precision
+    precision = precision(y_true, y_pred)
+    recall = recall(y_true, y_pred)
+    return 2*((precision*recall)/(precision+recall+K.epsilon()))
+
 
 if __name__ == '__main__':
 
@@ -111,6 +141,12 @@ if __name__ == '__main__':
         action='store',
         dest='checkpoints',
         required=True)
+    parser.add_argument(
+        '--load-model',
+        help='Load pretrained model',
+        action='store',
+        dest='load_model',
+        required=False)
     parser.add_argument(
         '--experiment-name',
         help='Name of the experiment',
@@ -154,6 +190,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     dataset = args.dataset
     checkpoints = args.checkpoints
+    load_model = args.load_model
     experiment_name = args.experiment_name
     model_name = args.model_name
     epochs = args.epochs
@@ -161,57 +198,31 @@ if __name__ == '__main__':
     optimizer = args.optimizer
     lr = args.lr
 
-    if model_name == 'resnet':
-        model = create_resnet_model()
-        target_size = (224, 224)
-    elif model_name == 'vgg':
-        model = create_vgg_model()
-        target_size = (224, 224)
-    elif model_name == 'nasnet':
-        model = create_nasnet_model()
-        target_size = (224, 224)
-    elif model_name == 'inception_resnet_v2':
-        model = create_inception_resnet_v2_model()
-        target_size = (299, 299)
+    if load_model:
+        model = load_model(load_model)
 
-    optimizer = get_optimizer(optimizer, lr)
+    else:
+        if model_name == 'resnet':
+            model = create_resnet_model()
+            target_size = (224, 224)
+        elif model_name == 'vgg':
+            model = create_vgg_model()
+            target_size = (224, 224)
+        elif model_name == 'nasnet':
+            model = create_nasnet_model()
+            target_size = (224, 224)
+        elif model_name == 'inception_resnet_v2':
+            model = create_inception_resnet_v2_model()
+            target_size = (299, 299)
 
-    model.summary()
+        optimizer = get_optimizer(optimizer, lr)
 
-    def f1_metric(y_true, y_pred):
-        def recall(y_true, y_pred):
-            """Recall metric.
-
-            Only computes a batch-wise average of recall.
-
-            Computes the recall, a metric for multi-label classification of
-            how many relevant items are selected.
-            """
-            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-            possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-            recall = true_positives / (possible_positives + K.epsilon())
-            return recall
-
-        def precision(y_true, y_pred):
-            """Precision metric.
-
-            Only computes a batch-wise average of precision.
-
-            Computes the precision, a metric for multi-label classification of
-            how many selected items are relevant.
-            """
-            true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-            predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-            precision = true_positives / (predicted_positives + K.epsilon())
-            return precision
-        precision = precision(y_true, y_pred)
-        recall = recall(y_true, y_pred)
-        return 2*((precision*recall)/(precision+recall+K.epsilon()))
-    
-    model.compile(
-        optimizer=optimizer,
-        loss='categorical_crossentropy',
-        metrics=['accuracy', f1_metric])
+        model.summary()
+        
+        model.compile(
+            optimizer=optimizer,
+            loss='categorical_crossentropy',
+            metrics=['accuracy', f1_metric])
 
     img_gen = ImageDataGenerator(
         featurewise_center=False,
