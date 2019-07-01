@@ -142,10 +142,10 @@ if __name__ == '__main__':
         dest='checkpoints',
         required=True)
     parser.add_argument(
-        '--load-model',
+        '--pretrained-model',
         help='Load pretrained model',
         action='store',
-        dest='load_model',
+        dest='pretrained_model',
         required=False)
     parser.add_argument(
         '--experiment-name',
@@ -190,7 +190,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     dataset = args.dataset
     checkpoints = args.checkpoints
-    load_model = args.load_model
+    pretrained_model = args.pretrained_model
     experiment_name = args.experiment_name
     model_name = args.model_name
     epochs = args.epochs
@@ -198,8 +198,8 @@ if __name__ == '__main__':
     optimizer = args.optimizer
     lr = args.lr
 
-    if load_model:
-        model = load_model(load_model)
+    if pretrained_model:
+        model = load_model(pretrained_model)
 
     else:
         if model_name == 'resnet':
