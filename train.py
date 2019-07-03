@@ -10,7 +10,7 @@ set_random_seed(2)
 
 import tensorflow as tf
 import keras
-from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D
+from keras.layers import Dense, Flatten, Activation, GlobalAveragePooling2D, Dropout
 from keras.models import Model
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
@@ -36,7 +36,9 @@ def create_nasnet_model():
     nasnet_out = NASnet.layers[-1].output
     nasnet_out = GlobalAveragePooling2D()(nasnet_out)
     x = Dense(512, activation='relu')(nasnet_out)
+    x = Dropout(0.5)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
@@ -51,7 +53,9 @@ def create_resnet_model():
     resnet_out = resnet.layers[-1].output
     resnet_out = GlobalAveragePooling2D()(resnet_out)
     x = Dense(512, activation='relu')(resnet_out)
+    x = Dropout(0.5)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
@@ -66,7 +70,9 @@ def create_vgg_model():
     vgg_out = vgg.layers[-1].output
     vgg_out = GlobalAveragePooling2D()(vgg_out)
     x = Dense(512, activation='relu')(vgg_out)
+    x = Dropout(0.5)(x)
     x = Dense(256, activation='relu')(x)
+    x = Dropout(0.5)(x)
     x = Dense(45)(x)
     x = Activation(tf.nn.softmax)(x)
 
@@ -167,17 +173,17 @@ if __name__ == '__main__':
         samplewise_std_normalization=True,
         zca_whitening=False,
         zca_epsilon=1e-06,
-        rotation_range=0,
-        width_shift_range=0.0,
-        height_shift_range=0.0,
+        rotation_range=15,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
         brightness_range=None,
         shear_range=0.0,
-        zoom_range=0.0,
+        zoom_range=0.2,
         channel_shift_range=0.0,
         fill_mode='nearest',
         cval=0.0,
-        horizontal_flip=False,
-        vertical_flip=False,
+        horizontal_flip=True,
+        vertical_flip=True,
         rescale=0,
         preprocessing_function=preprocess_input,
         data_format=None,
@@ -207,7 +213,7 @@ if __name__ == '__main__':
     reduce_on_plateau = ReduceLROnPlateau(
         monitor='val_loss',
         factor=0.1,
-        patience=5,
+        patience=8,
         verbose=0,
         mode='auto',
         min_delta=0.0001,
